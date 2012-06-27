@@ -11,7 +11,7 @@ If you are using [Apache Isis](http://incubator.apache.org/isis/) with the quick
 * Launch the web server
 * Access AROW at http://localhost:8080/arow.html
 
-You can also see a demo running at: http://simple-dusk-6870.herokuapp.com/arow.html
+You can also see a demo running at: http://simple-dusk-6870.herokuapp.com/arow-fpc.html
 
 Login as sven/pass and click the Projects > All Projects link to start.
 
