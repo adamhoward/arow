@@ -962,7 +962,7 @@ var AROW = {};
 	AROW.init = function (baseUrl, options) {
 		options = (typeof options === "undefined") ? {} : options;
 		var typesPackagePrefix = options.typesPackagePrefix
-		AROW.iconsMap = options.iconsMap;
+		AROW.iconsMap = options.iconsMap || {};
 
 		$.ajax({
 			url: baseUrl,
