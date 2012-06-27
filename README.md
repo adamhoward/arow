@@ -17,6 +17,7 @@ Login as sven/pass and click the Projects > All Projects link to start.
 
 ## Caveats
 * AROW has only been tested against the Apache Isis json-viewer implementing v0.52 of the RO spec.
+* And only on Chrome, Firefox, and Safari on Mac OSX and iPad.
 * And only on a few models.
 * And not everything works.
 
