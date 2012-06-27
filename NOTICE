@@ -1,0 +1,18 @@
+AROW
+Copyright (C) 2012 Adam Howard
+
+Portions of this software were developed by Johan Andries in the
+restfulobjects-js project, under the MIT license, available from 
+    http://http://code.google.com/p/restfulobjects-js/
+
+This software depends on the following libraries:
+* jQuery - http://jquery.org - MIT License
+* jQuery UI - http://jqueryui.com - MIT License
+* jQuery UI Touch Punch - http://touchpunch.furf.com - MIT License
+
+User interface styling is provided by the following projects:
+* Twitter Bootstrap - Apache License 2.0
+    http://twitter.github.com/bootstrap/
+* Aristo jQuery UI Theme - MIT License
+    https://github.com/taitems/Aristo-jQuery-UI-Theme
+
