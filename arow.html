@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>AROW</title>
+		<link rel="stylesheet" href="arow/Aristo/Aristo.css" type="text/css" />
+		<link rel="stylesheet" href="arow/bootstrap-navbar.min.css" type="text/css" />
+		<link rel="stylesheet" href="arow/arow-bootstrap-custom.css" type="text/css" />
+		<link rel="stylesheet" href="arow/arow.css" type="text/css" />
+	</head>
+	<body>
+	</body>
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+	<script src="arow/jquery.ui.touch-punch.min.js"></script>
+	<script src="arow/arow.js"></script>
+	<script>
+		$(function () {
+			var savedSession;
+
+			AROW.init("/");
+
+			if (window.localStorage) {
+				savedSession = JSON.parse(localStorage.getItem("AROW.session"));
+				if (savedSession) {
+					for (var i = 0, len = savedSession.length; i < len; i++) {
+						AROW.submitAndRender(savedSession[i].href, "GET", savedSession[i]);
+					}
+				}
+			}
+		});
+	</script>
+</html>
