@@ -1,0 +1,5 @@
+* Custom handlers
+* Be more resilient to failure
+* More determineX functions
+* Date handling (type and formatting)
+* Choices hint?
