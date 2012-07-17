@@ -6,12 +6,19 @@ AROW is a single-page javascript frontend to the [RestfulObjects](http://restful
 It presents repository services in a menu at the top of the screen. Domain objects, lists, collections, and the rest are in individual draggable dialogs.
 
 ## Usage
+Download a zip using the button above then follow the directions for your environment.
+
 If you are using [Apache Isis](http://incubator.apache.org/isis/) with the quickstart-archetype:
 * Copy arow/ and arow.html to the src/main/webapp folder of your webapp module.
 * Launch the web server
 * Access AROW at http://localhost:8080/arow.html
 
-You can also see a demo running at: http://simple-dusk-6870.herokuapp.com/arow-fpc.html  
+If you are using [RestfulObjects.NET](http://restfulobjects.codeplex.com):
+* Copy arow/ and arow.html into your Run project (which generates the Restful Objects API)
+* Launch the web server
+* Access AROW at http://localhost:53176/arow.html (or wherever your server starts up)
+
+You can also see a demo running at: http://simple-dusk-6870.herokuapp.com/arow-fpc.html
 Login as sven/pass and click the Projects > All Projects link to start.
 
 ## Caveats
