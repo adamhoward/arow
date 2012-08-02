@@ -5,6 +5,8 @@ A RestfulObjects Workspace.
 AROW is a single-page javascript frontend to the [RestfulObjects](http://restfulobjects.org/) spec.
 It presents repository services in a menu at the top of the screen. Domain objects, lists, collections, and the rest are in individual draggable dialogs.
 
+AROW is now built on top of a little library I'm calling RO.Client for now. So it used to be that AROW spoke directly to the RestfulObjects server and operated on the JSON. This became unmanageable when trying to support both the separate versions of the spec implemented and the simple/formal domain model schemes. So now AROW talks to RO.Client and RO.Client talks to the RestfulObjects server. All of the spec and domain model scheme differences are abstracted by the RO.Client interface.
+
 ## Usage
 Download a zip using the button above then follow the directions for your environment.
 
@@ -18,7 +20,7 @@ If you are using [RestfulObjects.NET](http://restfulobjects.codeplex.com):
 * Launch the web server
 * Access AROW at http://localhost:53176/arow.html (or wherever your server starts up)
 
-You can also see a demo running at: http://simple-dusk-6870.herokuapp.com/arow-fpc.html
+You can also see a demo running at: http://simple-dusk-6870.herokuapp.com/arow-fpc.html  
 Login as sven/pass and click the Projects > All Projects link to start.
 
 ## Caveats

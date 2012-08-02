@@ -9,6 +9,8 @@ This software depends on the following libraries:
 * jQuery - http://jquery.org - MIT License
 * jQuery UI - http://jqueryui.com - MIT License
 * jQuery UI Touch Punch - http://touchpunch.furf.com - MIT License
+* js-iso8601 - http://github.com/csnover/js-iso8601 - MIT License
+* jQuery-Timepicker-Addon - http://github.com/trentrichardson/jQuery-Timepicker-Addon - MIT License
 
 User interface styling is provided by the following projects:
 * Twitter Bootstrap - Apache License 2.0

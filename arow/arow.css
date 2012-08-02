@@ -1,7 +1,7 @@
 body {
 	background-color:#333;
-    padding-top: 60px;
-    padding-bottom: 40px;
+	padding-top: 60px;
+	padding-bottom: 40px;
 }
 #container {
 	position:absolute;
@@ -9,7 +9,7 @@ body {
 	right:0;
 	bottom:0;
 	left:0;
-	//overflow:scroll;
+/* 	overflow:scroll; */
 }
 input.disabled, input:disabled {
 	border:0;
@@ -48,6 +48,9 @@ legend:before {
 }
 fieldset > li {
 	list-style: none;
+}
+label + li {
+	padding-left:5px;
 }
 th {
 	text-align:left;
@@ -94,7 +97,7 @@ div.arow-action-menu {
 	display:none;
 	cursor:pointer;
 /* 	border:1px solid gray; */
-	font:80%/1 "Helvetica Neue",Helvetica,Arial,sans-serif;;
+	font:80%/1 "Helvetica Neue",Helvetica,Arial,sans-serif;
 	padding: 4px 0;
 	margin: 1px 0 0;
 	list-style: none;
@@ -137,7 +140,7 @@ border-bottom: 7px solid transparent;
 
 div.arow-action-menu  ul {
 	padding:0;
-	margin:0;				
+	margin:0;
 }
 div.arow-action-menu ul li {
 	list-style:none;
@@ -146,14 +149,14 @@ div.arow-action-menu ul li {
 /* 	font-weight:bold; */
 }
 div.arow-action-menu > ul > li.contributedby {
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 11px;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 11px;
 }
 div.arow-action-menu > ul > li.contributedby > ul {
-    text-transform: none;
-    font-weight: normal;
-    font-size: 13px;
+	text-transform: none;
+	font-weight: normal;
+	font-size: 13px;
 }
 div.arow-action-menu ul li:not(.contributedby):hover {
 	color:white;

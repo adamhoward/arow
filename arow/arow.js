@@ -2,11 +2,13 @@
  * A RestfulObjects Workspace
  */
 var AROW = {};
+var _spec = {};
 (function () {
 	'use strict';
+	/*jslint nomen: true, undef: true*/
+	/*global $ */
 
-	var _spec = {}, // Global variable for determined spec
-		customHandlers = [],
+	var customHandlers = [],
 		defaultHandlers = [
 			// 0.52
 			["application/json;profile=\"urn:org.restfulobjects/domainobject\"", handleDomainObjectRepresentation],
@@ -23,7 +25,7 @@ var AROW = {};
 			["application/json; profile=\"urn:org.restfulobjects:repr-types/object-action\"", handleObjectActionRepresentation],
 			["application/json; profile=\"urn:org.restfulobjects:repr-types/action-result\"", handleActionResultRepresentation],
 			["application/json; profile=\"urn:org.restfulobjects:repr-types/object\"", handleDomainObjectRepresentation],
-            ["application/json; profile=\"urn:org.restfulobjects:repr-types/object-collection\"", handleObjectCollectionRepresentation]
+			["application/json; profile=\"urn:org.restfulobjects:repr-types/object-collection\"", handleObjectCollectionRepresentation]
 		];
 
 	/**
@@ -43,13 +45,10 @@ var AROW = {};
 			url: baseUrl,
 			dataType: 'json',
 			success: function (homepageRepr) {
-				var user;
-
 				_spec = RO.determineSpec(homepageRepr);
 				if (_spec === undefined) {
 					alert("Warning: No spec found");
 				}
-				//userRepr = jsonGetNow(grepLink(homepageRepr.links, _spec.rels.user).href);
 				buildNavbar();
 				addRepositoriesToNavbar(grepLink(homepageRepr.links, _spec.rels.services), "#repositoryNav");
 				if (typesPackagePrefix !== undefined) {
@@ -68,7 +67,7 @@ var AROW = {};
 				$("div.arow-action-menu").css("display", "none");
 			}
 		});
-		$('*').live('click.clickmap', function(evt) {
+		$('*').live('click.clickmap', function (evt) {
 			$("div.arow-action-menu").css("display", "none");
 		});
 	};
@@ -84,12 +83,14 @@ var AROW = {};
 			dataType: 'json',
 			data: options.data,
 			success: function (json, str, xhr) {
-				var contentType = xhr.getResponseHeader("Content-Type");
-				var describedbyLink = grepLink(json.links, "describedby");
-				var handlerType = describedbyLink === undefined ? contentType : contentType + ",domaintype=\"" + determineDomainType(json) + "\"";
-				var allHandlers = customHandlers.concat(defaultHandlers);
-				var handler;
-				for (var i = 0, len = allHandlers.length; i < len; i++) {
+				var contentType = xhr.getResponseHeader("Content-Type"),
+					describedbyLink = grepLink(json.links, "describedby"),
+					handlerType = describedbyLink === undefined ? contentType : contentType + ",domaintype=\"" + determineDomainType(json) + "\"",
+					allHandlers = customHandlers.concat(defaultHandlers),
+					handler,
+					i,
+					len;
+				for (i = 0, len = allHandlers.length; i < len; i++) {
 					if (startsWith(handlerType, allHandlers[i][0])) {
 						handler = allHandlers[i][1];
 						break;
@@ -103,13 +104,7 @@ var AROW = {};
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				alert(JSON.parse(jqXHR.responseText).message);
-				//alert(textStatus);
 			}
-//			statusCode: {
-//				406: function (jqXHR, textStatus, errorThrown) {
-//					alert(JSON.parse(jqXHR.responseText).message);
-//				}
-//			}
 		});
 	};
 
@@ -121,7 +116,7 @@ var AROW = {};
 	AROW.saveSession = function () {
 		var viewsArray = $.map(AROW.views, function (view) {
 			var position = $(view.dialog).dialog("option", "position");
-			return {"href":view.href, "top":position[1], "left":position[0]};
+			return {"href": view.href, "top": position[1], "left": position[0]};
 		});
 		localStorage.setItem("AROW.session", JSON.stringify(viewsArray));
 	};
@@ -134,21 +129,21 @@ var AROW = {};
 	// Maintain registry of current views (dialogs)
 	//
 	AROW.views = {};
-	AROW.registerView = function(view) {
+	AROW.registerView = function (view) {
 		if (view.cid === undefined && view.dialog !== undefined) {
 			view.cid = guidGenerator();
 			view.dialog.dialog("option", "cid", view.cid);
 		}
 		AROW.views[view.cid] = view;
 	};
-	AROW.deregisterView = function(view) {
+	AROW.deregisterView = function (view) {
 		delete AROW.views[view.cid];
 	};
 	function repositionDialog(dialog, options) {
 		if (options !== undefined
 				&& options.top !== undefined
 				&& options.left !== undefined) {
-			dialog.dialog("option", "position", [options.left,options.top]);
+			dialog.dialog("option", "position", [options.left, options.top]);
 		}
 	}
 
@@ -193,7 +188,7 @@ var AROW = {};
 		$.ajax({
 			url: servicesLink.href,
 			dataType: 'json',
-			success : function(servicesListRepr) {
+			success: function (servicesListRepr) {
 				$.each(servicesListRepr.value, function (i, serviceLink) {
 					var icon,
 						toggle;
@@ -210,25 +205,26 @@ var AROW = {};
 								.html(icon !== undefined
 										? icon.after(serviceLink.title + "<b class='caret'></b>")
 										: serviceLink.title + "<b class='caret'></b>")
-						)
+							)
 						.appendTo($(navElemSelector));
 					$.ajax({
 						url: serviceLink.href,
 						dataType: 'json',
 						success: function (serviceRepr) {
-							var actionLinks = filterByMemberType(serviceRepr.members, "action");
+							var actionLinks = filterByMemberType(serviceRepr.members, "action"),
+								dropdownMenu;
 							if (actionLinks !== undefined) {
-								var dropdownMenu = $("<ul/>").addClass("dropdown-menu");
+								dropdownMenu = $("<ul/>").addClass("dropdown-menu");
 								$.each(actionLinks, function (i, actionLink) {
 									$('<li/>')
 										.html($('<a/>')
-											.attr("href", "#")
-											.text(unCamelCase(actionLink.id))
-											.click(function () {
-												AROW.submitAndRender(actionLink.links[0].href);
-											})
-									)
-									.appendTo(dropdownMenu);
+												.attr("href", "#")
+												.text(unCamelCase(actionLink.id))
+												.click(function () {
+													AROW.submitAndRender(actionLink.links[0].href);
+												})
+										)
+										.appendTo(dropdownMenu);
 								});
 								dropdownMenu.appendTo(toggle);
 							}
@@ -240,11 +236,13 @@ var AROW = {};
 	}
 
 	function loadTypes(typesLink, typesPackagePrefix) {
-		var typeListRepr = jsonGetNow(typesLink.href);
-		var myDomainTypes = typeListRepr.values.filter(function (typeLink) {
-			return startsWith(typeLink.href.substring(1+typeLink.href.lastIndexOf('/')), typesPackagePrefix);
-		});
-		for (var i = 0, len = myDomainTypes.length; i < len; i++) {
+		var typeListRepr = jsonGetNow(typesLink.href),
+			myDomainTypes = typeListRepr.values.filter(function (typeLink) {
+				return startsWith(typeLink.href.substring(1 + typeLink.href.lastIndexOf('/')), typesPackagePrefix);
+			}),
+			i,
+			len;
+		for (i = 0, len = myDomainTypes.length; i < len; i++) {
 			RO.Model.byUrl(myDomainTypes[i].href);
 		}
 	}
@@ -254,7 +252,7 @@ var AROW = {};
 // Functions to handle to the many RO response types by creating dialogs.
 //
 /////////////////////////////////////////////////////////////////////////
-	
+
 	function handleDomainObjectRepresentation(urlHref, json, xhr, options) {
 		var form = $('<form/>'),
 			actions,
@@ -313,7 +311,7 @@ var AROW = {};
 			});
 			$.each(referenceProperties, function (i, referenceProperty) {
 				renderOpenViewLink(
-					unCamelCase(referenceProperty.id) + ": " + referenceProperty.value.title,
+					"<strong>" + unCamelCase(referenceProperty.id) + "</strong>: " + referenceProperty.value.title,
 					referenceProperty.value.href
 				).appendTo(propertiesFieldset);
 			});
@@ -378,7 +376,7 @@ var AROW = {};
 		repositionDialog(dialog, options);
 
 		if (!json.serviceId && actions.length > 0) {
-            var actionMenuContent = convertActionLinksToActionMenuContent(actions);
+			var actionMenuContent = convertActionLinksToActionMenuContent(actions);
 			addActionMenuToDialog(actionMenuContent, dialog);
 		}
 
@@ -387,8 +385,8 @@ var AROW = {};
 
 	function handleListRepresentation(urlHref, listRepr, xhr, options) {
 		var ul = $('<ul/>'),
-            iconUrl = determineIconUrl(listRepr),
-            length = listRepr.value.length;
+			iconUrl = determineIconUrl(listRepr),
+			length = listRepr.value.length;
 
 		$.each(listRepr.value, function (i, element) {
 			renderOpenViewLink(element.title, element.href, iconUrl).appendTo(ul);
@@ -398,7 +396,7 @@ var AROW = {};
 			title: length + (length === 1 ? ' object' : ' objects'),
 			width: 'auto',
 			//height: window.innerHeight - 70,
-            draggable: false
+			draggable: false
 		});
 		dialog.parent().draggable({containment: "#container"});
 
@@ -425,7 +423,7 @@ var AROW = {};
 		});
 
 		// Add action to view collection as list
-        actionMenuContent = $('<ul/>');
+		actionMenuContent = $('<ul/>');
 		$('<li/>')
 			.text("View as List")
 			.click(function () {
@@ -440,10 +438,10 @@ var AROW = {};
 		addActionMenuToDialog(actionMenuContent, dialog);
 
 		// Reposition dialog if top/left options exist
-        repositionDialog(dialog, options);
+		repositionDialog(dialog, options);
 
 		// Register dialog for saved session
-        AROW.registerView({dialog: dialog, href: urlHref});
+		AROW.registerView({dialog: dialog, href: urlHref});
 	}
 
 	function handleObjectActionRepresentation(urlHref, json, xhr, options) {
@@ -771,46 +769,46 @@ var AROW = {};
 		return table;
 	}
 
-    function convertActionLinksToActionMenuContent(actionLinks) {
-        var actionMenuContent = $('<ul/>');
-        $.each(actionLinks, function (i, actionLink) {
-            var detailsRepr = jsonGetNow(grepLink(actionLink.links, _spec.rels.details).href);
-            var contributedbyLink = grepLink(detailsRepr.links, "contributedby");
-            if (contributedbyLink) {
-                var contributedbyHeader = $('<li/>')
-                    .addClass("contributedby")
-                    .text(contributedbyLink.title)
-                    .appendTo(actionMenuContent);
-                $('<li/>')
-                    .text(unCamelCase(actionLink.id))
-                    .click(function (event) {
-                        var invokeLink = grepLink(detailsRepr.links, _spec.rels.invoke);
-                        if (invokeLink.method === "GET") {
-                            var href = invokeLink.href + "?" + encodeURIComponent(JSON.stringify(invokeLink["arguments"]));
-                            AROW.submitAndRender(href, invokeLink.method);
-                        } else {
-                            AROW.submitAndRender(invokeLink.href, invokeLink.method, {"data" : JSON.stringify(invokeLink["arguments"])});
-                        }
-                    })
-                    .appendTo($('<ul/>').appendTo(contributedbyHeader));
-            } else {
-                $('<li/>')
-                    .text(unCamelCase(actionLink.id))
-                    .click(function (event) {
-                        AROW.submitAndRender(grepLink(actionLink.links, _spec.rels.details).href);
-                    })
-                    .appendTo(actionMenuContent);
-            }
-        });
+	function convertActionLinksToActionMenuContent(actionLinks) {
+		var actionMenuContent = $('<ul/>');
+		$.each(actionLinks, function (i, actionLink) {
+			var detailsRepr = jsonGetNow(grepLink(actionLink.links, _spec.rels.details).href);
+			var contributedbyLink = grepLink(detailsRepr.links, "contributedby");
+			if (contributedbyLink) {
+				var contributedbyHeader = $('<li/>')
+					.addClass("contributedby")
+					.text(contributedbyLink.title)
+					.appendTo(actionMenuContent);
+				$('<li/>')
+					.text(unCamelCase(actionLink.id))
+					.click(function (event) {
+						var invokeLink = grepLink(detailsRepr.links, _spec.rels.invoke);
+						if (invokeLink.method === "GET") {
+							var href = invokeLink.href + "?" + encodeURIComponent(JSON.stringify(invokeLink["arguments"]));
+							AROW.submitAndRender(href, invokeLink.method);
+						} else {
+							AROW.submitAndRender(invokeLink.href, invokeLink.method, {"data" : JSON.stringify(invokeLink["arguments"])});
+						}
+					})
+					.appendTo($('<ul/>').appendTo(contributedbyHeader));
+			} else {
+				$('<li/>')
+					.text(unCamelCase(actionLink.id))
+					.click(function (event) {
+						AROW.submitAndRender(grepLink(actionLink.links, _spec.rels.details).href);
+					})
+					.appendTo(actionMenuContent);
+			}
+		});
 
-        return actionMenuContent;
-    }
+		return actionMenuContent;
+	}
 
 	function addActionMenuToDialog(actionMenuContent, dialog) {
 		var actionMenu,
-            actionMenuTrigger;
+			actionMenuTrigger;
 
-        actionMenu = $('<div/>')
+		actionMenu = $('<div/>')
 			.html(actionMenuContent)
 			.addClass("arow-action-menu");
 
@@ -874,9 +872,9 @@ var AROW = {};
 		return $.grep(links, function (v) { return startsWith(v.rel, relStr); })[0];
 	}
 	function grepParameter(parameters, paramId) {
-        if ($.isPlainObject(parameters)) {
-            return parameters[paramId];
-        }
+		if ($.isPlainObject(parameters)) {
+			return parameters[paramId];
+		}
 		return $.grep(parameters, function (v) { return v.id === paramId; })[0];
 	}
 	function firstByName(arrayOfObjects, name) {
@@ -938,7 +936,6 @@ var AROW = {};
 				result = resp;
 			},
 			error: function (jqXHR, textStatus, error) {
-				
 				throw textStatus + ':' + error;
 			}
 		});
@@ -990,34 +987,9 @@ var AROW = {};
 
 })();
 
-/*
- * RestfulObjects model
- */
 var RO = {};
 (function () {
-	"use strict";
-
-	function jsonGetNow(url) {
-		var result;
-		$.ajax({
-			async: false,
-			url: url,
-			dataType: 'json',
-			success: function (resp, status, xhr) {
-				result = resp;
-			},
-			error: function (jqXHR, textStatus, error) {
-				throw textStatus + ':' + error;
-			}
-		});
-		return result;
-	}
-
-	function firstByRel(links, relStr) {
-		return links.filter(function (link) { return link.rel === relStr; })[0];
-	}
-
-	var specs = {
+		var specs = {
 			"0.52": {
 				rels: {
 					services: "services",
@@ -1027,7 +999,15 @@ var RO = {};
 					invoke: "invoke",
 					details: "details",
 					modify: "modify",
-					update: "modify"
+					update: "modify",
+					property: "property",
+					action: "action",
+					persist: "persist",
+					elementtype: "elementtype"
+				},
+				reprTypes: {
+					propertyDescription: "application/json;profile=\"urn:org.restfulobjects/propertydescription\"",
+					collectionDescription: "application/json;profile=\"urn:org.restfulobjects/collectiondescription\""
 				},
 				resultTypeParam: "resulttype",
 				propertyType: "type"
@@ -1041,7 +1021,15 @@ var RO = {};
 					invoke: "urn:org.restfulobjects:rels/invoke",
 					details: "urn:org.restfulobjects:rels/details",
 					modify: "urn:org.restfulobjects:rels/modify",
-					update: "urn:org.restfulobjects:rels/update"
+					update: "urn:org.restfulobjects:rels/update",
+					property: "urn:org.restfulobjects:rels/property",
+					action: "urn:org.restfulobjects:rels/action",
+					persist: "urn:org.restfulobjects:rels/persist",
+					elementtype: "urn:org.restfulobjects:rels/elementtype"
+				},
+				reprTypes: {
+					propertyDescription: "application/json; profile=\"urn:org.restfulobjects:repr-types/property-description\"",
+					collectionDescription: "application/json; profile=\"urn:org.restfulobjects:repr-types/collection-description\""
 				},
 				resultTypeParam: "resultType",
 				propertyType: "returnType"
@@ -1055,7 +1043,15 @@ var RO = {};
 					invoke: "urn:org.restfulobjects:rels/invoke",
 					details: "urn:org.restfulobjects:rels/details",
 					modify: "urn:org.restfulobjects:rels/modify",
-					update: "urn:org.restfulobjects:rels/update"
+					update: "urn:org.restfulobjects:rels/update",
+					property: "urn:org.restfulobjects:rels/property",
+					action: "urn:org.restfulobjects:rels/action",
+					persist: "urn:org.restfulobjects:rels/persist",
+					elementtype: "urn:org.restfulobjects:rels/elementtype"
+				},
+				reprTypes: {
+					propertyDescription: "application/json; profile=\"urn:org.restfulobjects:repr-types/property-description\"",
+					collectionDescription: "application/json; profile=\"urn:org.restfulobjects:repr-types/collection-description\""
 				},
 				resultTypeParam: "resultType",
 				propertyType: "returnType"
@@ -1085,36 +1081,39 @@ var RO = {};
 		return undefined;
 	};
 
-
 	RO.PropertyDescr = function(raw) {
 		this.name = raw.id;
 		this.friendlyName = raw.extensions.friendlyName;
-		if(raw.memberType === 'property') {
-			this.completeType = firstByRel(raw.links, 'returntype').href;
+		if(raw.memberType === _spec.rels.property) {
+			this.completeType = firstByRel(raw.links, _spec.rels.returntype).href;
 			this.type = this.completeType.substring(1+this.completeType.lastIndexOf('/'));
 			this.maxLength = raw.maxLength;
+			this.memberOrder = raw.extensions.memberOrder || 999;
+			this.optional = (raw.optional !== undefined ? raw.optional : true);
 		} else {
-			alert(this.friendlyName+' is een ongekend membertype ('+raw.memberType+')');
+			throw this.friendlyName+' has an unknown membertype ('+raw.memberType+')';
 		}
 	}
-	
+
 	RO.CollectionDescr = function(raw) {
 		this.name = raw.id;
 		this.friendlyName = raw.extensions.friendlyName;
+		this.completeElementType = firstByRel(raw.links, _spec.rels.elementtype).href;
+		this.elementType = this.completeElementType.substring(1+this.completeElementType.lastIndexOf("/"));
 	}
-	
+
 	RO.ActionParamDescr = function(raw) {
 		this.friendlyName = raw.extensions.friendlyName;
 		this.name = raw.name;
 		this.optional = raw.optional;
-		this.completeType = firstByRel(raw.links, 'returntype').href;
+		this.completeType = firstByRel(raw.links, _spec.rels.returntype).href;
 		this.type = this.completeType.substring(1+this.completeType.lastIndexOf('/'));
 	}
-	
+
 	RO.ActionDescr = function(raw) {
 		this.id = raw.id;
 		this.friendlyName = raw.extensions.friendlyName;
-		this.completeReturnType = firstByRel(raw.links, 'returntype').href;
+		this.completeReturnType = firstByRel(raw.links, _spec.rels.returntype).href;
 		this.returnType = this.completeReturnType.substring(1+this.completeReturnType.lastIndexOf('/'));
 		this.parameters = {};
 		var that = this;
@@ -1123,28 +1122,28 @@ var RO = {};
 			that.parameters[param.name] = param;
 		});
 	}
-	
+
 	RO.DomainObjectDescr = function(raw) {
 		this.friendlyName = raw.extensions.friendlyName;
 		this.completeType = firstByRel(raw.links, 'self').href;
 		this.type = this.completeType.substring(1+this.completeType.lastIndexOf('/'));
 		this.actions = {};
 		this.properties = {};
+		this.collections = {};
 		var that = this;
 		$.each(raw.members, function() {
-			if(this.rel === 'property') {
-				
-				if(this.type === 'application/json;profile="urn:org.restfulobjects/propertydescription"') {
+			if(this.rel === _spec.rels.property && raw.extensions.isService !== true) {
+				if (startsWith(this.type, _spec.reprTypes.propertyDescription)) {
 					var property = new RO.PropertyDescr(jsonGetNow(this.href));
 					that.properties[property.name] = property;
-				} else if(this.type === 'application/json;profile="urn:org.restfulobjects/collectiondescription"') {
-					//property = new Isis.CollectionDescr(Isis.jsonGet(this.href));
+				} else if (startsWith(this.type, _spec.reprTypes.collectionDescription)) {
+					var collection = new RO.CollectionDescr(jsonGetNow(this.href));
+					that.collections[collection.name] = collection;
 					// TODO Should these go in a different map?
 				}
-				
-			} else if(this.rel === 'action') {
+			} else if (this.rel === _spec.rels.action) {
 				// TODO this if is a workaround for an Isis defect (?)
-				if(!(this.href.match('/id$')=='/id')) {
+				if (!(this.href.match('/id$')=='/id')) {
 					var actionRaw = new RO.ActionDescr(jsonGetNow(this.href));
 					that.actions[actionRaw.id] = actionRaw;
 				}
@@ -1153,7 +1152,7 @@ var RO = {};
 			}
 		});
 	}
-	
+
 	RO.Model = (function(){
 		var model = {};
 		model.byUrl = function(url) {
@@ -1164,5 +1163,47 @@ var RO = {};
 		}
 		return model;
 	})();
-	
+
+// Utilities
+	function jsonGetNow(url) {
+		var result;
+		$.ajax({
+			async: false,
+			url: url,
+			dataType: 'json',
+			success: function (resp, status, xhr) {
+				result = resp;
+			},
+			error: function (jqXHR, textStatus, error) {
+				throw textStatus + ':' + error;
+			}
+		});
+		return result;
+	}
+
+	function startsWith(str, pattern) {
+		return str.indexOf(pattern) === 0;
+	}
+	function firstByRel(links, relStr) {
+		return links.filter(function (link) { return startsWith(link.rel, relStr); })[0];
+	}
+
+	function firstByTitle(array, title) {
+		return firstByPredicate(array, function (obj) { return obj.title === title; });
+	}
+	function firstByPredicate(objectOrArray, predicate) {
+		return filterObjectOrArray(objectOrArray, predicate)[0];
+	}
+
+	function filterObjectOrArray(objOrArray, predicate) {
+		var filtered = [],
+			key;
+		for (key in objOrArray) {
+			if (predicate(objOrArray[key])) {
+				filtered.push(objOrArray[key]);
+			}
+		}
+		return filtered;
+	}
+
 }());
