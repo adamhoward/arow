@@ -633,7 +633,7 @@ var RO = {};
 	}
 
 	RO.DomainObjectDescr = function(raw) {
-		this.friendlyName = raw.extensions.friendlyName;
+		this.friendlyName = raw.friendlyName;
 		this.completeType = firstByRel(raw.links, 'self').href;
 		this.type = this.completeType.substring(1+this.completeType.lastIndexOf('/'));
 		this.isService = (raw.isService !== undefined && raw.isService === true) || raw.extensions.isService === true;
