@@ -633,7 +633,7 @@ var RO = {};
 	}
 
 	RO.DomainObjectDescr = function(raw) {
-		this.friendlyName = raw.friendlyName;
+		this.friendlyName = coalesce(raw.friendlyName, raw.extensions.friendlyName);
 		this.completeType = firstByRel(raw.links, 'self').href;
 		this.type = this.completeType.substring(1+this.completeType.lastIndexOf('/'));
 		this.isService = (raw.isService !== undefined && raw.isService === true) || raw.extensions.isService === true;
@@ -723,6 +723,18 @@ var RO = {};
 			.replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
 			// uppercase the first character
 			.replace(/^./, function (str) { return str.toUpperCase(); });
+	}
+
+	/**
+	 * Just like || but without coercion.
+	 */
+	function coalesce() {
+		for (var i = 0; i < arguments.length; i++) {
+			if (arguments[i] !== undefined && arguments[i] !== null) {
+				return arguments[i];
+			}
+		}
+		return null;
 	}
 
 }());
